@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
+import datetime
 
 def Conv_3x3(in_channels, out_channels, stride):
     return nn.Sequential(
@@ -10,7 +11,6 @@ def Conv_3x3(in_channels, out_channels, stride):
         nn.ReLU6()
     )
 
-# 疑点，最后是用了1x1到1280的特征深度？
 def Conv_1x1(in_channels, out_channels, stride):
     return nn.Sequential(
         nn.Conv2d(in_channels, out_channels, 1, stride, 0, bias=False),
@@ -18,33 +18,31 @@ def Conv_1x1(in_channels, out_channels, stride):
         nn.ReLU6()
     )
 
-# 疑点，为啥这部分没有对最后的输出做ReLU操作
 def SepConv_3x3(in_channels, out_channels, stride):
     return nn.Sequential(
-        nn.Conv2d(in_channels, in_channels, 3, stride, 1, group=in_channels, bias=False),
+        nn.Conv2d(in_channels, in_channels, 3, stride, 1, groups=in_channels, bias=False),
         nn.BatchNorm2d(in_channels),
         nn.ReLU6(),
 
-        nn.Conv2d(in_channels, out_channels, 1, stride, 0, bias=False),
+        nn.Conv2d(in_channels, out_channels, 1, 1, 0, bias=False),
         nn.BatchNorm2d(out_channels)
     )
 
-# 疑点，短路连接只有在满足条件才做？
 class MBConv3_3x3(nn.Module):
     def __init__(self, in_channels, out_channels, stride):  
         super(MBConv3_3x3, self).__init__()
         mid_channels = int(3 * in_channels)
 
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, mid_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(in_channels, mid_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, mid_channels, 3, stride, 1, group=mid_channels, bias=False),
+            nn.Conv2d(mid_channels, mid_channels, 3, stride, 1, groups=mid_channels, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, out_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(mid_channels, out_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(out_channels)
         )
 
@@ -62,15 +60,15 @@ class MBConv3_5x5(nn.Module):
         mid_channels = int(3 * in_channels)
 
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, mid_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(in_channels, mid_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, mid_channels, 5, stride, 2, group=mid_channels, bias=False),
+            nn.Conv2d(mid_channels, mid_channels, 5, stride, 2, groups=mid_channels, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, out_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(mid_channels, out_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(out_channels)
         )
 
@@ -88,15 +86,15 @@ class MBConv6_3x3(nn.Module):
         mid_channels = int(6 * in_channels)
 
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, mid_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(in_channels, mid_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, mid_channels, 3, stride, 1, group=mid_channels, bias=False),
+            nn.Conv2d(mid_channels, mid_channels, 3, stride, 1, groups=mid_channels, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, out_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(mid_channels, out_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(out_channels)
         )
 
@@ -114,15 +112,15 @@ class MBConv6_5x5(nn.Module):
         mid_channels = int(6 * in_channels)
 
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, mid_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(in_channels, mid_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, mid_channels, 5, stride, 2, group=mid_channels, bias=False),
+            nn.Conv2d(mid_channels, mid_channels, 5, stride, 2, groups=mid_channels, bias=False),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU6(),
 
-            nn.Conv2d(mid_channels, out_channels, 1, stride, 0, bias=False),
+            nn.Conv2d(mid_channels, out_channels, 1, 1, 0, bias=False),
             nn.BatchNorm2d(out_channels)
         )
 
@@ -191,3 +189,13 @@ class MnasNet(nn.Module):
 
         return x
 
+if __name__ == '__main__':
+    net = MnasNet()
+    #print(net)
+    x = torch.randn(1,3,224,224)
+    for i in range(15):
+        time1 = datetime.datetime.now()
+        y = net(x)
+        print('Time Cost: ', (datetime.datetime.now() - time1).microseconds)
+    #y = net(x)
+    #print(y)

@@ -8,7 +8,9 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 from torchvision import transforms, models, datasets
 from data_loader.ImageNet_datasets import ImageNetData
-import model.resnet_cbam as resnet_cbam
+import model.mnasnet as mnasnet
+import model.mnasnetgithub as mnasnetgithub
+import model.shufflenetv2 as shufflenetv2
 from trainer.trainer import Trainer
 from utils.logger import Logger
 from PIL import Image
@@ -70,10 +72,14 @@ def main(args):
 
     if  'resnet50' == args.model.split('_')[0]:
         my_model = models.resnet50(pretrained=False)
-    elif 'resnet50-cbam' == args.model.split('_')[0]:
-        my_model = resnet_cbam.resnet50_cbam(pretrained=False)
     elif 'resnet101' == args.model.split('_')[0]:
         my_model = models.resnet101(pretrained=False)
+    elif 'mnasnet' == args.model.split('_')[0]:
+        my_model = mnasnet.MnasNet()
+    elif 'mnasnetgithub' == args.model.split('_')[0]:
+        my_model = mnasnetgithub.MnasNet()
+    elif 'shufflenetv2' == args.model.split('_')[0]:
+        my_model = shufflenetv2.ShuffleNetV2()
     else:
         raise ModuleNotFoundError
 
@@ -106,7 +112,7 @@ if __name__ == '__main__':
                         help='trainer debug flag')
     parser.add_argument('-g', '--gpu', default='0', type=str,
                         help='GPU ID Select')                    
-    parser.add_argument('-d', '--data_root', default='./datasets',
+    parser.add_argument('-d', '--data_root', default='/data/datasets/ImageNet',
                          type=str, help='data root')
     parser.add_argument('-t', '--train_file', default='./datasets/train.txt',
                          type=str, help='train file')
