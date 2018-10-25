@@ -9,7 +9,6 @@ from torch.optim import lr_scheduler
 from torchvision import transforms, models, datasets
 from data_loader.ImageNet_datasets import ImageNetData
 import model.mnasnet as mnasnet
-import model.mnasnetgithub as mnasnetgithub
 import model.shufflenetv2 as shufflenetv2
 from trainer.trainer import Trainer
 from utils.logger import Logger
@@ -76,8 +75,6 @@ def main(args):
         my_model = models.resnet101(pretrained=False)
     elif 'mnasnet' == args.model.split('_')[0]:
         my_model = mnasnet.MnasNet()
-    elif 'mnasnetgithub' == args.model.split('_')[0]:
-        my_model = mnasnetgithub.MnasNet()
     elif 'shufflenetv2' == args.model.split('_')[0]:
         my_model = shufflenetv2.ShuffleNetV2()
     else:

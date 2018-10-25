@@ -20,9 +20,10 @@ CPU Info: Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz
 
 ### ImageNet-1K
 
-Models         | validation(Top-1) | validation(Top-5) | CPU Cost(ms) |
--------------  | ----------------- | ----------------- | ------------ |
-MnasNet        | 64.91             | 86.28             | ~300         |
+Models           | validation(Top-1) | validation(Top-5) | CPU Cost(ms) |
+---------------  | ----------------- | ----------------- | ------------ |
+MnasNet          | 64.91             | 86.28             | ~300         |
+ShuffleNetV2 x1  | 61.83             | 83.99             | ~100         |
 
 ## Note
 
